@@ -1,4 +1,5 @@
 import FlockingCompute from "./flockingCompute";
+import FlockingVisualize from "./flockingVisualize";
 
 import positionFragmentShaderSource from "./shaders/position.frag";
 import velocityFragmentShaderSource from "./shaders/velocity.frag";
@@ -6,7 +7,7 @@ import velocityFragmentShaderSource from "./shaders/velocity.frag";
 export default function main() {
   let width = 32;
   let height = width;
-  let dt = 1;
+  let dt = 0.01;
   let canvas = document.getElementById("viewport");
   let attributes = { premultipliedAlpha: false };
   let gl = canvas.getContext("webgl", attributes);
@@ -14,6 +15,7 @@ export default function main() {
   gl.getExtension("WEBGL_color_buffer_float");
 
   let flockingCompute = new FlockingCompute(gl, width, height, dt);
+  let flockingVisualize = new FlockingVisualize(gl, width, height);
 
   // create initial texture data
   let positionData = new Float32Array(4 * height * width);
@@ -21,22 +23,23 @@ export default function main() {
   positionData = positionData.map(() => Math.random() - 0.5);
   velocityData = velocityData.map(() => Math.random() - 0.5);
 
-  flockingCompute.createPositionProgram(
+  let positionProgram = flockingCompute.createPositionProgram(
     positionFragmentShaderSource,
     positionData
   );
-  flockingCompute.createVelocityProgram(
+  let velocityProgram = flockingCompute.createVelocityProgram(
     velocityFragmentShaderSource,
     velocityData
+  );
+  flockingVisualize.createVisualizationProgram();
+  flockingVisualize.setPostionAndVelocityProgram(
+    positionProgram,
+    velocityProgram
   );
 
   function run() {
     flockingCompute.run();
-    let pos = flockingCompute.readPositionTexture(0, 0);
-    pos = Array.from(pos).map((v) => v.toFixed(2));
-    let vel = flockingCompute.readVelocityTexture(0, 0);
-    vel = Array.from(vel).map((v) => v.toFixed(2));
-    alert(`position: ${pos}\nvelocity: ${vel}`);
+    flockingVisualize.run();
     requestAnimationFrame(run);
   }
   requestAnimationFrame(run);
