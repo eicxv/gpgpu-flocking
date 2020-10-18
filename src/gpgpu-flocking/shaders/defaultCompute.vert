@@ -1,9 +1,9 @@
-attribute vec3 position;
-attribute vec2 textureCoord;
+attribute vec3 a_position;
+attribute vec2 a_textureCoord;
 
-varying highp vec2 vTextureCoord;
+varying highp vec2 v_textureCoord;
 
 void main(){
-  gl_Position = vec4(position, 1.0);
-  vTextureCoord = textureCoord;
+  gl_Position = vec4(a_position, 1.0);
+  v_textureCoord = a_textureCoord;
 }

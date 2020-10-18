@@ -32,22 +32,22 @@ export default class FlockingVisualize {
     );
 
     // attributes
-    this.referenceLocation = gl.getAttribLocation(this.program, "reference");
+    this.referenceLocation = gl.getAttribLocation(this.program, "a_reference");
     gl.enableVertexAttribArray(this.referenceLocation);
-    this.positionLocation = gl.getAttribLocation(this.program, "position");
+    this.positionLocation = gl.getAttribLocation(this.program, "a_position");
     gl.enableVertexAttribArray(this.positionLocation);
     // uniforms
     this.viewProjectionMatrixLocation = gl.getUniformLocation(
       this.program,
-      "viewProjectionMatrix"
+      "u_viewProjectionMatrix"
     );
     this.texturePositionLocation = gl.getUniformLocation(
       this.program,
-      "texturePosition"
+      "u_texturePosition"
     );
     this.textureVelocityLocation = gl.getUniformLocation(
       this.program,
-      "textureVelocity"
+      "u_textureVelocity"
     );
   }
 

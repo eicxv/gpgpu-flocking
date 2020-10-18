@@ -29,18 +29,18 @@ export default class FlockingCompute {
 
     let location;
     // attributes
-    location = gl.getAttribLocation(p.program, "position");
+    location = gl.getAttribLocation(p.program, "a_position");
     gl.enableVertexAttribArray(location);
     p.attributes.positionLoc = location;
-    location = gl.getAttribLocation(p.program, "textureCoord");
+    location = gl.getAttribLocation(p.program, "a_textureCoord");
     gl.enableVertexAttribArray(location);
     p.attributes.textureCoordLoc = location;
     // uniforms
-    location = gl.getUniformLocation(p.program, "dt");
+    location = gl.getUniformLocation(p.program, "u_dt");
     p.uniforms.dtLoc = location;
-    location = gl.getUniformLocation(p.program, "texturePosition");
+    location = gl.getUniformLocation(p.program, "u_texturePosition");
     p.uniforms.texturePositionLoc = location;
-    location = gl.getUniformLocation(p.program, "textureVelocity");
+    location = gl.getUniformLocation(p.program, "u_textureVelocity");
     p.uniforms.textureVelocityLoc = location;
 
     this.createTexturesAndFramebuffers(p, textureData);
@@ -69,18 +69,18 @@ export default class FlockingCompute {
 
     let location;
     // attributes
-    location = gl.getAttribLocation(p.program, "position");
+    location = gl.getAttribLocation(p.program, "a_position");
     gl.enableVertexAttribArray(location);
     p.attributes.positionLoc = location;
-    location = gl.getAttribLocation(p.program, "textureCoord");
+    location = gl.getAttribLocation(p.program, "a_textureCoord");
     gl.enableVertexAttribArray(location);
     p.attributes.textureCoordLoc = location;
     // uniforms
-    location = gl.getUniformLocation(p.program, "dt");
+    location = gl.getUniformLocation(p.program, "u_dt");
     p.uniforms.dtLoc = location;
-    location = gl.getUniformLocation(p.program, "texturePosition");
+    location = gl.getUniformLocation(p.program, "u_texturePosition");
     p.uniforms.texturePositionLoc = location;
-    location = gl.getUniformLocation(p.program, "textureVelocity");
+    location = gl.getUniformLocation(p.program, "u_textureVelocity");
     p.uniforms.textureVelocityLoc = location;
 
     this.createTexturesAndFramebuffers(p, textureData);
