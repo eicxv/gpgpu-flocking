@@ -9,11 +9,11 @@ uniform sampler2D u_texturePosition;
 uniform sampler2D u_textureVelocity;
 varying vec2 v_textureCoord;
 
-const vec2 textureSize = vec2(32., 32.);
+const vec2 textureSize = vec2(64., 64.);
 
 const float cohesionStrength = 0.6;
 const float alignmentStrength = 1.2;
-const float separationStrength = 0.07;
+const float separationStrength = 0.7;
 
 const float cohesionDistance = 6.;
 const float alignmentDistance = 3.;
@@ -25,19 +25,37 @@ const float separationDistanceSquared = separationDistance * separationDistance;
 
 const float speedLimit = 1.;
 
+const float sphereRadius = 5.;
+const float sphereRadiusSquared = sphereRadius * sphereRadius;
+const float boundaryStrength = 0.5;
+
+vec3 sphereBoundary(vec3 position) {
+    float distSquared = dot( position, position );
+    if (distSquared > sphereRadiusSquared) {
+        float dist = sqrt(distSquared);
+        float coeff = (-boundaryStrength / dist) * (dist - sphereRadius);
+        return position * coeff;
+    }
+    return vec3(0., 0., 0.);
+}
+
 void main()	{
     vec3 position = texture2D( u_texturePosition, v_textureCoord ).xyz;
     vec3 velocity = texture2D( u_textureVelocity, v_textureCoord ).xyz;
-    vec3 force = vec3(0., 0., 0.);
-    vec3 avgPosition = vec3(0., 0., 0.);
-    vec3 avgVelocity = vec3(0., 0., 0.);
-    vec3 separation = vec3(0., 0., 0.);
+    vec3 force;
+    vec3 avgPosition;
+    vec3 avgVelocity;
+    vec3 separation;
     float cohesionCount = 0.;
     float alignmentCount = 0.;
-    
+    vec2 ref;
+
+    // boundary
+    force += sphereBoundary(position);
+
     for ( float s = 0.5; s < textureSize.x; s++ ) {
         for ( float t = 0.5; t < textureSize.y; t++ ) {
-            vec2 ref = vec2(s, t) / textureSize;
+            ref = vec2(s, t) / textureSize;
             vec3 otherPos = texture2D( u_texturePosition, ref ).xyz;
             vec3 toOther = otherPos - position;
             float distSquared = dot(toOther, toOther);
@@ -45,7 +63,8 @@ void main()	{
 
             if (distSquared < separationDistanceSquared) {
                 // separation
-                float coeff = 1. - sqrt(distSquared) / separationDistance;
+                float dist = sqrt(distSquared);
+                float coeff = (1. / dist) - (1. / separationDistance);
                 separation -= toOther * coeff;
             } else if (distSquared < alignmentDistanceSquared) {
                 // alignment
