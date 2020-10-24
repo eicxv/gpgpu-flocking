@@ -1,16 +1,16 @@
-import * as m4 from "../matrix/m4";
 import * as utility from "./utility";
+
 import visualizationVertexShaderSource from "./shaders/visualization.vert";
 import visualizationFragmentShaderSource from "./shaders/visualization.frag";
 
 export default class FlockingVisualize {
-  constructor(gl, textureWidth, textureHeight) {
+  constructor(gl, camera, textureWidth, textureHeight) {
     this.gl = gl;
+    this.camera = camera;
     this.width = gl.canvas.clientWidth;
     this.height = gl.canvas.clientHeight;
     this.textureWidth = textureWidth;
     this.textureHeight = textureHeight;
-    this.viewProjectionMatrix = this.computeViewProjectionMatrix();
     gl.clearColor(0.1, 0.1, 0.12, 1);
   }
 
@@ -68,10 +68,11 @@ export default class FlockingVisualize {
     gl.vertexAttribPointer(this.positionLocation, 3, gl.FLOAT, null, 20, 0);
     gl.vertexAttribPointer(this.referenceLocation, 2, gl.FLOAT, null, 20, 12);
 
+    this.camera.updateViewProjectionMatrix();
     gl.uniformMatrix4fv(
       this.viewProjectionMatrixLocation,
       false,
-      this.viewProjectionMatrix
+      this.camera.viewProjectionMatrix
     );
     let p;
     p = this.positionProgram;
@@ -84,26 +85,7 @@ export default class FlockingVisualize {
     gl.bindTexture(gl.TEXTURE_2D, p.textures[p.index]);
     gl.uniform1i(this.textureVelocityLocation, 1);
 
-    gl.drawArrays(gl.TRIANGLES, 0, 6 * 32 * 32);
-  }
-
-  computeViewProjectionMatrix() {
-    let gl = this.gl;
-    let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    let zNear = 1;
-    let zFar = 2000;
-    let fieldOfView = (45 * 2 * Math.PI) / 360;
-    let projectionMatrix = m4.perspective(fieldOfView, aspect, zNear, zFar);
-
-    let cameraPosition = [-12, 0, 0];
-    let cameraTarget = [0, 0, 0];
-    let up = [0, 1, 0];
-
-    let cameraMatrix = m4.lookAt(cameraPosition, cameraTarget, up);
-    let viewMatrix = m4.inverse(cameraMatrix);
-    let viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
-
-    return viewProjectionMatrix;
+    gl.drawArrays(gl.TRIANGLES, 0, 6 * this.textureWidth * this.textureHeight);
   }
 
   resizeCanvas() {
@@ -114,6 +96,7 @@ export default class FlockingVisualize {
     if (canvas.width != this.width || canvas.height != this.height) {
       canvas.width = this.width;
       canvas.height = this.height;
+      this.camera.createProjectionMatrix();
     }
   }
 
