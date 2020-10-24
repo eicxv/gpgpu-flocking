@@ -4,13 +4,13 @@ precision highp float;
 precision mediump float;
 #endif
 
-uniform float dt;
-uniform sampler2D texturePosition;
-uniform sampler2D textureVelocity;
-varying vec2 vTextureCoord;
+uniform float u_dt;
+uniform sampler2D u_texturePosition;
+uniform sampler2D u_textureVelocity;
+varying vec2 v_textureCoord;
 
 void main()	{
-    vec3 position = texture2D( texturePosition, vTextureCoord ).xyz;
-    vec3 velocity = texture2D( textureVelocity, vTextureCoord ).xyz;
-    gl_FragColor = vec4( position + velocity * dt, 1. );
+    vec3 position = texture2D( u_texturePosition, v_textureCoord ).xyz;
+    vec3 velocity = texture2D( u_textureVelocity, v_textureCoord ).xyz;
+    gl_FragColor = vec4( position + velocity * u_dt, 1. );
 }
